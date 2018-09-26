@@ -12,7 +12,7 @@ from keras.models import Sequential
 from keras.models import load_model
 from numpy import newaxis
 
-TodayStrList = ["2018.08.31"]
+TodayStrList = ["2018.09.19", "2018.09.20", "2018.09.21"]
 
 tf.set_random_seed(777)
 
