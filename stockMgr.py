@@ -1,6 +1,8 @@
 import os
 import os.path
 import stockUtil
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,7 +14,7 @@ from keras.models import Sequential
 from keras.models import load_model
 from numpy import newaxis
 
-TodayStrList = ["2018.09.19", "2018.09.20", "2018.09.21"]
+TodayStrList = ["2018.10.15", "2018.10.16", "2018.10.17", "2018.10.18"]
 
 tf.set_random_seed(777)
 
@@ -36,28 +38,29 @@ class StockMgr:
         for index, row in df.iterrows():
             stock_date = row["날짜"]
 
-            if stock_date not in TodayStrList:
-                stock_close = row["종가"]
-                stock_diff = row["전일비"]
-                stock_open = row["시가"]
-                stock_high = row["고가"]
-                stock_low = row["저가"]
-                stock_volume = row["거래량"]
-                ma5 = row["MA5"]
-                ma20 = row["MA20"]
-                ma60 = row["MA60"]
-                ma120 = row["MA120"]
+            # if stock_date in TodayStrList:
+            # if True:
+            stock_close = row["종가"]
+            stock_diff = row["전일비"]
+            stock_open = row["시가"]
+            stock_high = row["고가"]
+            stock_low = row["저가"]
+            stock_volume = row["거래량"]
+            ma5 = row["MA5"]
+            ma20 = row["MA20"]
+            ma60 = row["MA60"]
+            ma120 = row["MA120"]
 
-                if stock_date in df_frgn.index:
-                    frgn_info = df_frgn.loc[stock_date]
-                    DbMgr.insert_into_stock_info_db(code_num, stock_date, stock_close, stock_diff, stock_open,
-                                                    stock_high, stock_low, stock_volume, frgn_info["등락률"],
-                                                    frgn_info["기관"], frgn_info["외국인"], frgn_info["Unnamed: 7"],
-                                                    frgn_info["Unnamed: 8"], ma5, ma20, ma60, ma120)
-                else:
-                    DbMgr.insert_into_stock_info_db(code_num, stock_date, stock_close, stock_diff, stock_open,
-                                                    stock_high, stock_low, stock_volume, "0", 0, 0, 0, "0", ma5, ma20,
-                                                    ma60, ma120)
+            if stock_date in df_frgn.index:
+                frgn_info = df_frgn.loc[stock_date]
+                DbMgr.insert_into_stock_info_db(code_num, stock_date, stock_close, stock_diff, stock_open,
+                                                stock_high, stock_low, stock_volume, frgn_info["등락률"],
+                                                frgn_info["기관"], frgn_info["외국인"], frgn_info["Unnamed: 7"],
+                                                frgn_info["Unnamed: 8"], ma5, ma20, ma60, ma120)
+            else:
+                DbMgr.insert_into_stock_info_db(code_num, stock_date, stock_close, stock_diff, stock_open,
+                                                stock_high, stock_low, stock_volume, "0", 0, 0, 0, "0", ma5, ma20,
+                                                ma60, ma120)
 
     @staticmethod
     def collect_stock_info(code_num):
@@ -335,6 +338,7 @@ class StockMgr:
         stock_df = DbMgr.check_condition_info(stock_code, "2018.03.01", TodayStrList[-1])
 
         if len(stock_df) < 21:
+            StockMgr.collect_total_stock_info(stock_code)
             return False
 
         volume = stock_df["stock_volume"]
@@ -358,21 +362,24 @@ class StockMgr:
         prev_ma20 = ma20[-2:-1].values[0]
         cur_ma20 = ma20[-1:].values[0]
         ma60 = stock_df["ma60"]
-        week1 = stock_df["2018.08.06":"2018.08.10"]
+        week1 = stock_df["2018.09.10":"2018.09.14"]
 
         if week1.size == 0:
+            print("실패1")
             StockMgr.collect_total_stock_info(stock_code)
             return False
 
-        week2 = stock_df["2018.08.13":"2018.08.17"]
+        week2 = stock_df["2018.09.17":"2018.09.21"]
 
         if week2.size == 0:
+            print("실패2")
             StockMgr.collect_total_stock_info(stock_code)
             return False
 
-        week3 = stock_df["2018.08.20":"2018.08.24"]
+        week3 = stock_df["2018.09.27":"2018.09.28"]
 
         if week3.size == 0:
+            print("실패3")
             StockMgr.collect_total_stock_info(stock_code)
             return False
 
@@ -476,8 +483,9 @@ if __name__ == "__main__":
     i = 0
     code = "000660"
     name = "SK하이닉스"
+    StockMgr.check_condition(code)
     # StockMgr.collect_total_stock_info(code)
     # StockMgr.collect_stock_info(code)
     # StockMgr.tf_train(code, ["stock_open", "stock_high", "stock_low", "stock_volume", "stock_agency", "stock_foreigner",
     #                          "stock_close"])
-    StockMgr.keras_train(code, "stock_close")
+    # StockMgr.keras_train(code, "stock_close")

@@ -95,7 +95,11 @@ if __name__ == "__main__":
                 i += 1
 
                 if DbMgr.exist_stock_info_db(code)[0][0] == 1:
-                    StockMgr.collect_stock_info(code)
+                    if DbMgr.get_stock_count(code) < 10:
+                        print("생성")
+                        StockMgr.collect_total_stock_info(code)
+                    else:
+                        StockMgr.collect_stock_info(code)
                 else:
                     print("생성")
                     StockMgr.collect_total_stock_info(code)
@@ -109,5 +113,7 @@ if __name__ == "__main__":
             tf_predict(DbMgr.get_stock_code("Q"))
         elif menu == 6:
             test(DbMgr.get_all_stock_code())
+        elif menu == 8:
+            print(DbMgr.get_stock_count("000660")[0][0])
         else:
             break
