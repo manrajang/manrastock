@@ -14,7 +14,7 @@ from keras.models import Sequential
 from keras.models import load_model
 from numpy import newaxis
 
-TodayStrList = ["2018.10.15", "2018.10.16", "2018.10.17", "2018.10.18"]
+TodayStrList = ["2019.03.11", "2019.03.12", "2019.03.13", "2019.03.14", "2019.03.15"]
 
 tf.set_random_seed(777)
 
@@ -335,7 +335,7 @@ class StockMgr:
 
     @staticmethod
     def check_condition(stock_code):
-        stock_df = DbMgr.check_condition_info(stock_code, "2018.03.01", TodayStrList[-1])
+        stock_df = DbMgr.check_condition_info(stock_code, "2018.10.01", TodayStrList[-1])
 
         if len(stock_df) < 21:
             StockMgr.collect_total_stock_info(stock_code)
@@ -362,21 +362,21 @@ class StockMgr:
         prev_ma20 = ma20[-2:-1].values[0]
         cur_ma20 = ma20[-1:].values[0]
         ma60 = stock_df["ma60"]
-        week1 = stock_df["2018.09.10":"2018.09.14"]
+        week1 = stock_df["2018.10.08":"2018.10.12"]
 
         if week1.size == 0:
             print("실패1")
             StockMgr.collect_total_stock_info(stock_code)
             return False
 
-        week2 = stock_df["2018.09.17":"2018.09.21"]
+        week2 = stock_df["2018.10.15":"2018.10.19"]
 
         if week2.size == 0:
             print("실패2")
             StockMgr.collect_total_stock_info(stock_code)
             return False
 
-        week3 = stock_df["2018.09.27":"2018.09.28"]
+        week3 = stock_df["2018.10.22":"2018.10.24"]
 
         if week3.size == 0:
             print("실패3")
